@@ -1,35 +1,26 @@
-import re
+import os
+import json
+
+from .proxy import Proxy
+from .abc import BaseFileParser
 
 
-_RE_SCHEME = r"(?P<scheme>\w+)://"
-_RE_HOST = r"(?P<host>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
-_RE_PORT = r"(?P<port>\d{1,5})"
-_RE_USERNAME = r"(?P<username>[a-zA-Z0-9._-]+)"
-_RE_PASSWORD = r"(?P<password>[a-zA-Z0-9._-]+)"
-_RE_SEPARATORS = r"[:;@,]"
+def open_file_decorator(method):
+    def wrapper(self, file, *args, **kwargs):
+        if not os.path.exists(file):
+            raise FileNotFoundError(f"File {file} does not exist.")
+        with open(file, "r", encoding="utf-8") as fp:
+            return method(self, fp, *args, **kwargs)
+    return wrapper
 
 
-def _build_regex(*regexs):
-    return _RE_SEPARATORS.join(regexs)
+class TextFileParser(BaseFileParser, format_name="txt"):
+    @open_file_decorator
+    def parse(self, fp, default_scheme, custom_parser=None):
+        return [Proxy.from_line(line, default_scheme, custom_parser) for line in fp]
 
 
-_RE_ADDRESS = _build_regex(_RE_HOST, _RE_PORT)
-_RE_ADDRESS_WITH_AUTH = _build_regex(_RE_USERNAME, _RE_PASSWORD, _RE_ADDRESS)
-_RE_ADDRESS_WITH_AUTH_REVERSED = _build_regex(_RE_ADDRESS, _RE_USERNAME,
-                                              _RE_PASSWORD)
-
-
-def parse_line(line):
-    for regex in [_RE_ADDRESS_WITH_AUTH_REVERSED, _RE_ADDRESS_WITH_AUTH,
-                  _RE_ADDRESS]:
-        if match := re.search(regex, line):
-            attrs = match.groupdict()
-            if attrs.get("port"):
-                attrs["port"] = int(attrs["port"])
-
-            if match := re.search(_RE_SCHEME, line):
-                attrs["scheme"] = match.group(1)
-
-            return attrs
-    return {}
-
+class JSONFileParser(BaseFileParser, format_name="json"):
+    @open_file_decorator
+    def parse(self, fp, default_scheme, custom_parser=None):
+        return [Proxy.from_data(item, default_scheme) for item in json.load(fp)]
