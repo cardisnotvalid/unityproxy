@@ -77,9 +77,9 @@ From csv file:
 
 ```console
 [
-	Proxy(socks5://127.0.0.1:8080),
-	Proxy(http://username:password@127.0.0.1:8080),
-	Proxy(https://username:password@0.0.0.1:3232)
+    Proxy(socks5://127.0.0.1:8080),
+    Proxy(http://username:password@127.0.0.1:8080),
+    Proxy(https://username:password@0.0.0.1:3232)
 ]
 ```
 
