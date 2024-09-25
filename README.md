@@ -7,6 +7,33 @@ username:password@127.0.0.1:8080
 127.0.0.1:8080@username:password
 ```
 
+proxies.json:
+```json
+[
+    {
+        "host": "127.0.0.1",
+        "port": 1234,
+        "scheme": "socks5",
+        "username": "username",
+        "password": "password"
+    },
+    {
+        "host": "0.0.0.0",
+        "port": 8080,
+        "scheme": "socks5",
+        "username": "username",
+        "password": "password"
+    },
+    {
+        "host": "43.53.63.1",
+        "port": 4431,
+        "scheme": "https",
+        "username": "username",
+        "password": "password"
+    }
+]
+```
+
 ---
 
 ```python
@@ -21,6 +48,23 @@ print(unity)
     Proxy(http://127.0.0.1:8080),
     Proxy(http://username:password@127.0.0.1:8080),
     Proxy(http://username:password@127.0.0.1:8080)
+]
+```
+
+---
+
+```python
+from unityproxy import UnityProxy
+
+unity = UnityProxy.from_file("proxies.json")
+print(unity)
+```
+
+```console
+[
+    Proxy(socks5://username:password@127.0.0.1:1234),
+    Proxy(socks5://username:password@0.0.0.0:8080),
+    Proxy(https://username:password@43.53.63.1:4431)
 ]
 ```
 
