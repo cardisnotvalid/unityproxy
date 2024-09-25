@@ -34,14 +34,26 @@ proxies.json:
 ]
 ```
 
+proxies.csv:
+```csv
+host,port,scheme,username,password
+127.0.0.1,8080,socks5
+127.0.0.1,8080,http,username,password
+0.0.0.1,3232,https,username,password
+```
+
 ---
 
 ```python
 from unityproxy import UnityProxy
 
 unity = UnityProxy.from_file("proxies.txt")
+unity = UnityProxy.from_file("proxies.json")
+unity = UnityProxy.from_file("proxies.csv")
 print(unity)
 ```
+
+From txt file:
 
 ```console
 [
@@ -51,20 +63,23 @@ print(unity)
 ]
 ```
 
----
-
-```python
-from unityproxy import UnityProxy
-
-unity = UnityProxy.from_file("proxies.json")
-print(unity)
-```
+From json file:
 
 ```console
 [
     Proxy(socks5://username:password@127.0.0.1:1234),
     Proxy(socks5://username:password@0.0.0.0:8080),
     Proxy(https://username:password@43.53.63.1:4431)
+]
+```
+
+From csv file:
+
+```console
+[
+	Proxy(socks5://127.0.0.1:8080),
+	Proxy(http://username:password@127.0.0.1:8080),
+	Proxy(https://username:password@0.0.0.1:3232)
 ]
 ```
 

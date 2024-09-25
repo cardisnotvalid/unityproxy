@@ -1,4 +1,5 @@
 import os
+import csv
 import json
 
 from .proxy import Proxy
@@ -24,3 +25,9 @@ class JSONFileParser(BaseFileParser, format_name="json"):
     @open_file_decorator
     def parse(self, fp, default_scheme, custom_parser=None):
         return [Proxy.from_data(item, default_scheme) for item in json.load(fp)]
+
+
+class CSVFileParser(BaseFileParser, format_name="csv"):
+    @open_file_decorator
+    def parse(self, fp, default_scheme, custom_parser=None):
+        return [Proxy.from_data(item, default_scheme) for item in csv.DictReader(fp)]
