@@ -1,1 +1,5 @@
-from .unity import UnityProxy
+from .client import IterableClient
+
+
+class UnityProxy(IterableClient):
+    pass
